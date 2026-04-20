@@ -1,0 +1,51 @@
+@charset "UTF-8";
+body {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    margin: 0;
+    padding: 20px;
+}
+
+.cabecalho-ferramentas {
+    background-color: white;
+    padding: 10px 20px;
+    border: 1px solid black;
+    border-bottom: none;
+
+}
+
+.cabecalho-ferramentas h2 {
+    margin: 0;
+    font-size: 16px;
+    color: black;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border: 1px solid black;
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 6px 12px;
+    text-align: right;
+    font-size: 13px;
+    color: black;
+}
+
+th {
+    background-color: white;
+    font-weight: bold;
+    text-align: center;
+    color: black;
+}
+
+.col-id {
+    background-color: white;
+    width: 40px;
+    text-align: center;
+    font-weight: bold;
+    color: black;
+}
