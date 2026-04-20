@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
+<<<<<<< HEAD
 	<name>coleta-de-dados</name>
+=======
+	<name>webServer_DC4K</name>
+>>>>>>> branch 'master' of https://github.com/Rebeca-Scarmo/webServer_BitDogLab.git
 	<comment></comment>
 	<projects>
 	</projects>
