@@ -47,7 +47,7 @@ def coletaDadosFormat ():
     hum = sensor.relative_humidity
     momentoRegistro = registraMomentoFormat()
     
-    machine.lightsleep(1500)
+    time.sleep_ms(1500)
     
     leitura = (temp, hum, momentoRegistro)
     leitura = "{},{},{}\n".format(leitura[0],leitura[1], leitura[2])
@@ -85,6 +85,6 @@ def main ():
             
             guardaDados(coleta)
             
-        machine.lightsleep(1000)
+        time.sleep_ms(1000)
             
 main()
