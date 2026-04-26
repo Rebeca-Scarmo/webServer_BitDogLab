@@ -5,7 +5,7 @@ import utime
 import select
 import sys
 import neopixel 
-
+import time
 ##Variáveis Globais
     ##Configura a matriz de led para alertar quando está coletando
 np = neopixel.NeoPixel(Pin(7),25)
