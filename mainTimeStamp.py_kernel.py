@@ -6,18 +6,14 @@ import machine
 import utime
 import select
 import sys
-
-
+ 
+ledWarning = Pin(12, Pin.OUT)
 i2c = I2C(0, scl=Pin(1), sda=Pin(0))
-
-
 sensor = ahtx0.AHT20(i2c)
-
 ultimoTempo = 0
 momentoRegistro = 0
 poller = select.poll()
 poller.register(sys.stdin, select.POLLIN)
-
 inicio = utime.ticks_ms()
 
 while True:
@@ -32,6 +28,8 @@ while True:
     if(utime.ticks_diff(utime.ticks_ms(), ultimoTempo) > 60000):
         ultimoTempo = utime.ticks_ms()
         
+        ledWarning.on()
+        
         temp = sensor.temperature
         hum = sensor.relative_humidity
         momentoRegistro = "{}:{}".format(
@@ -41,25 +39,14 @@ while True:
         
         temp_str = "{:.2f} C".format(temp)
         hum_str = "{:.2f} %".format(hum)
-
-     
-        oled.fill(0)
-
-        
-        oled.text("Temp:" + temp_str, 0, 0) 
-
-        oled.text("Umid:" + hum_str, 0, 20)
-        
-        oled.text("Moment:" + momentoRegistro, 0, 40)
-        
-
-        oled.show()
-
-        
+        time.sleep_ms(1500)
+        ledWarning.off()
+            
         print("Temp:", temp_str)
         print("Umid:", hum_str)
         print("Momento:", momentoRegistro)
         print("------------------")
+        
         leitura = (temp, hum, momentoRegistro)
         
         writeFormat = "{}, {}, {}\n".format(leitura[0],leitura[1], leitura[2])
