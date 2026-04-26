@@ -1,22 +1,29 @@
 from machine import I2C, Pin
 import ahtx0
-import time
-from hardware import oled
 import machine
 import utime
 import select
 import sys
- 
-ledWarning = Pin(12, Pin.OUT)
+import neopixel 
+
+##Variáveis Globais
+    ##Configura a matriz de led para alertar quando está coletando
+np = neopixel.NeoPixel(Pin(7),25)
+
+    ##Configura o sensor I2C (estou utilizando apenas 1 dos sensores do modulo)
 i2c = I2C(0, scl=Pin(1), sda=Pin(0))
 sensor = ahtx0.AHT20(i2c)
-ultimoTempo = 0
-momentoRegistro = 0
+
+    ##Configurações para leitura do console
 poller = select.poll()
 poller.register(sys.stdin, select.POLLIN)
-inicio = utime.ticks_ms()
 
-while True:
+    ##Variaveis auxiliares
+inicio = utime.ticks_ms()
+marcaTempo = utime.ticks_ms() 
+INTERVALO = 60000
+    
+def dumpConsole():
     if poller.poll(0):
         if(sys.stdin.readline().strip() == "dump"):
             try:
@@ -25,31 +32,59 @@ while True:
                         print(i)
             except:
                 print("Nenhum dado registrado ainda")
-    if(utime.ticks_diff(utime.ticks_ms(), ultimoTempo) > 60000):
-        ultimoTempo = utime.ticks_ms()
+                
+def verificaTempo():
+    global marcaTempo
+    agora = utime.ticks_ms()
+    if(utime.ticks_diff(agora, marcaTempo) > INTERVALO):
+        marcaTempo = utime.ticks_add(marcaTempo, INTERVALO)
+        return True
+    else:
+        return False
+    
+def coletaDadosFormat ():
+    temp = sensor.temperature
+    hum = sensor.relative_humidity
+    momentoRegistro = registraMomentoFormat()
+    
+    machine.lightsleep(1500)
+    
+    leitura = (temp, hum, momentoRegistro)
+    leitura = "{},{},{}\n".format(leitura[0],leitura[1], leitura[2])
+    return leitura
+    
+def registraMomentoFormat ():
+    segundos = int(utime.ticks_diff(utime.ticks_ms(), inicio) / 1000)
+    momentoRegistro = "{}:{}".format(segundos // 60, segundos % 60)
+    return momentoRegistro
+
+def sinalizaColeta (onOff):
+    if(onOff):
+        np[0] = (0, 1, 0)
+        np.write()
+    else:
+        np[0] = (0, 0, 0)
+        np.write()
+    
+def guardaDados (leitura):
+    with open('dadosCSV.csv','a') as f:
+            f.write(leitura)
+
+def main ():
+    
+    while True:
+        coleta = None
+        dumpConsole()
+        deve = verificaTempo()
         
-        ledWarning.on()
-        
-        temp = sensor.temperature
-        hum = sensor.relative_humidity
-        momentoRegistro = "{}:{}".format(
-            (int(utime.ticks_diff(utime.ticks_ms(), inicio)/1000)//60),
-            (int(utime.ticks_diff(utime.ticks_ms(), inicio)/1000)%60)
-        )
-        
-        temp_str = "{:.2f} C".format(temp)
-        hum_str = "{:.2f} %".format(hum)
-        time.sleep_ms(1500)
-        ledWarning.off()
+        if deve:
+            sinalizaColeta(1)
+            coleta = coletaDadosFormat()
+            sinalizaColeta(0)
+        if(coleta):
             
-        print("Temp:", temp_str)
-        print("Umid:", hum_str)
-        print("Momento:", momentoRegistro)
-        print("------------------")
-        
-        leitura = (temp, hum, momentoRegistro)
-        
-        writeFormat = "{}, {}, {}\n".format(leitura[0],leitura[1], leitura[2])
-        with open('dadosCSV.csv','a') as f:
-            f.write(writeFormat)
-          
+            guardaDados(coleta)
+            
+        machine.lightsleep(1000)
+            
+main()
