@@ -1,0 +1,43 @@
+package webserver.servelet;
+
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import java.io.IOException;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import webserver.banco.BancoManager;
+import java.io.PrintWriter;
+import java.sql.SQLException;
+
+@WebServlet("/upload")
+public class UploadServelet extends HttpServlet {
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException, SQLException, ClassNotFoundException {
+    	StringBuilder sb = new StringBuilder();
+    	String linha;
+    	while ((linha = request.getReader().readLine()) != null) {
+    	    sb.append(linha);
+    	}
+    	String json = sb.toString();
+    	
+    	if (json.contains("idSessao")) {
+    	    // salvar leituras
+    	} else {
+    	    JsonObject obj = new Gson().fromJson(json, JsonObject.class);
+    	    String horaInicio = obj.get("horaInicio").getAsString();
+    	    String dataColeta = obj.get("dataColeta").getAsString();
+    	    
+    	    int id = BancoManager.salvarSessao(horaInicio, dataColeta);
+    	    
+    	    response.setContentType("application/json");
+    	    PrintWriter out = response.getWriter();
+    	    out.print("{\"id\":" + id + "}");
+    	    out.flush();
+    	}
+    }
+}

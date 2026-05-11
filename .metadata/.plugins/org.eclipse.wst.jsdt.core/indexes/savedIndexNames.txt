@@ -1,0 +1,7 @@
+INDEX VERSION 1.4+/home/rebeca/Projetos/Projetos eclipse/workspace-dc4k-novo/.metadata/.plugins/org.eclipse.wst.jsdt.core/indexes
+2151874257.index
+2195840799.index
+112221609.index
+3542141687.index
+479925642.index
+3854304184.index

@@ -1,0 +1,93 @@
+package webserver.banco;
+
+import java.sql.Statement;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class BancoManager {
+
+    private static final String URL = "jdbc:h2:~/Programas/db/dc4k";
+    private static final String USUARIO = "sa";
+    private static final String SENHA = "";
+    
+    public static Connection getConnection() throws SQLException, ClassNotFoundException{
+    	Class.forName("org.h2.Driver");
+    	Connection connection;
+    	connection = DriverManager.getConnection(URL, USUARIO, SENHA);
+    	return connection;
+    }
+    
+    public static void inicializer() throws SQLException, ClassNotFoundException{
+    	Connection con = getConnection();
+    	Statement st = con.createStatement();
+    	st.execute("CREATE TABLE IF NOT EXISTS sessao_coleta("+
+    			"id_sessao INT AUTO_INCREMENT PRIMARY KEY,"+
+    			"hora_inicio VARCHAR(5),"+
+    			"data_coleta VARCHAR(10)"+
+    			")");
+    	st.execute("CREATE TABLE IF NOT EXISTS leitura_coleta("+
+    			"id_leitura INT AUTO_INCREMENT PRIMARY KEY,"+
+    			"id_sessao INT,"+
+    			"tempDentro DOUBLE,"+
+    			"umidDentro DOUBLE,"+
+    			"tempFora DOUBLE,"+
+    			"umidFora DOUBLE,"+
+    			"minuto INT,"+
+    			"segundo INT,"+
+    			"horario VARCHAR(5),"+
+    			"FOREIGN KEY (id_sessao) REFERENCES sessao_coleta(id_sessao)"+
+    			")");
+    	st.close();
+    	con.close();
+    	
+    }
+    
+    public static int salvarSessao (String horaInicio, String dataColeta) throws SQLException, ClassNotFoundException {
+    	Connection con = getConnection();
+    	PreparedStatement ps = con.prepareStatement(
+    			"INSERT INTO sessao_coleta (hora_inicio, data_coleta) VALUES (?,?)",
+    			Statement.RETURN_GENERATED_KEYS);
+    	ps.setString(1, horaInicio);
+    	ps.setString(2, dataColeta);
+    	ps.executeUpdate();
+    	
+    	ResultSet rs = ps.getGeneratedKeys();
+    	rs.next();
+    	int id = rs.getInt(1);
+    	
+    	ps.close();
+    	con.close();
+    	
+    	return id;	
+    }
+    
+    public static void salvarLeituras(int idSessao, double tempDentro, double umidDentro, 
+    	    double tempFora, double umidFora, int minuto, int segundo, String horario) 
+    	    throws SQLException, ClassNotFoundException {
+    	    
+    	    Connection con = getConnection();
+    	    PreparedStatement ps = con.prepareStatement(
+    	        "INSERT INTO leitura_coleta (id_sessao, tempDentro, umidDentro, tempFora, umidFora, minuto, segundo, horario) VALUES (?,?,?,?,?,?,?,?)");
+    	    
+    	    ps.setInt(1, idSessao);
+    	    ps.setDouble(2, tempDentro);
+    	    ps.setDouble(3, umidDentro);
+    	    ps.setDouble(4, tempFora);
+    	    ps.setDouble(5, umidFora);
+    	    ps.setInt(6, minuto);
+    	    ps.setInt(7, segundo);
+    	    ps.setString(8, horario);
+    	    
+    	    ps.executeUpdate();
+    	    
+    	    ps.close();
+        	con.close();
+    	}
+    			
+    			
+    }
+
+

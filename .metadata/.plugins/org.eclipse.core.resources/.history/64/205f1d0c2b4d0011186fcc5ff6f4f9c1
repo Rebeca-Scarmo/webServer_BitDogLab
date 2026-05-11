@@ -1,0 +1,16 @@
+function enviarDados(){
+	TODO
+}
+
+function formataDados(){
+	const arquivo = document.getElementById("InputFile").files[0];
+	const leitor = new FileReader();
+	leitor.onload = evento();
+	leitor.readAsText(arquivo);
+	enviarDados();
+}
+
+function evento(){
+	const conteudo = evento.target.result;
+}
+document.getElementById("BtnUpload").addEventListener("click",formataDados);

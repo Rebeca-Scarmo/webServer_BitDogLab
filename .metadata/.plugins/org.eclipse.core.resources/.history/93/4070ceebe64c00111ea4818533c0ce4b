@@ -1,0 +1,4 @@
+function enviarDados(){
+	TODO
+}
+document.getElementById("BtnUpload").addEventListener("click",enviarDados);

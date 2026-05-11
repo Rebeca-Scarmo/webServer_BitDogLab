@@ -1,0 +1,30 @@
+function enviarDados(){
+	TODO
+}
+
+function formataDados(){
+	const arquivo = document.getElementById("InputFile").files[0];
+	const leitor = new FileReader();
+	leitor.onload = evento;
+	leitor.readAsText(arquivo);
+	
+}
+
+function evento(e){
+	const conteudo = e.target.result;
+	const linhas = conteudo.split("\n");
+	const matriz = [];
+	for (let i =0; i<linhas.length;i++){
+		const colunas = linhas[i].split(",");
+		const leitura = {
+        tempDentro: parseFloat(colunas[0]),
+        umidDentro: parseFloat(colunas[1]),
+        tempFora: parseFloat(colunas[2]),
+        umidFora: parseFloat(colunas[3]),
+        tempo: colunas[4]
+    };
+    matriz.push(leitura);
+	}
+	enviarDados();
+}
+document.getElementById("BtnUpload").addEventListener("click",formataDados);
