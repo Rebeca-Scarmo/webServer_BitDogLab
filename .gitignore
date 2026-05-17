@@ -1,0 +1,14 @@
+.metadata/
+build/
+Servers/
+.settings/
+
+*.class
+
+# Eclipse
+.project
+.classpath
+
+# Banco H2
+*.mv.db
+*.trace.db

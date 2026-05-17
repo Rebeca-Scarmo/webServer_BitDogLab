@@ -1,3 +1,0 @@
-INDEX VERSION 1.134
-/home/rebeca/Projetos/Projetos eclipse/workspace-dc4k-novo/.metadata/.plugins/org.eclipse.jst.jsp.core/jspsearch/2273010261.index
-/WebServer_DC4K/src/main/java
