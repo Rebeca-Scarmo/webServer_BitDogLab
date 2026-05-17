@@ -3,6 +3,8 @@ package webserver.banco;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class BancoManager {
@@ -42,5 +44,50 @@ public class BancoManager {
     	con.close();
     	
     }
-}
+    
+    public static int salvarSessao (String horaInicio, String dataColeta) throws SQLException, ClassNotFoundException {
+    	Connection con = getConnection();
+    	PreparedStatement ps = con.prepareStatement(
+    			"INSERT INTO sessao_coleta (hora_inicio, data_coleta) VALUES (?,?)",
+    			Statement.RETURN_GENERATED_KEYS);
+    	ps.setString(1, horaInicio);
+    	ps.setString(2, dataColeta);
+    	ps.executeUpdate();
+    	
+    	ResultSet rs = ps.getGeneratedKeys();
+    	rs.next();
+    	int id = rs.getInt(1);
+    	
+    	ps.close();
+    	con.close();
+    	
+    	return id;	
+    }
+    
+    public static void salvarLeituras(int idSessao, double tempDentro, double umidDentro, 
+    	    double tempFora, double umidFora, int minuto, int segundo, String horario) 
+    	    throws SQLException, ClassNotFoundException {
+    	    
+    	    Connection con = getConnection();
+    	    PreparedStatement ps = con.prepareStatement(
+    	        "INSERT INTO leitura_coleta (id_sessao, tempDentro, umidDentro, tempFora, umidFora, minuto, segundo, horario) VALUES (?,?,?,?,?,?,?,?)");
+    	    
+    	    ps.setInt(1, idSessao);
+    	    ps.setDouble(2, tempDentro);
+    	    ps.setDouble(3, umidDentro);
+    	    ps.setDouble(4, tempFora);
+    	    ps.setDouble(5, umidFora);
+    	    ps.setInt(6, minuto);
+    	    ps.setInt(7, segundo);
+    	    ps.setString(8, horario);
+    	    
+    	    ps.executeUpdate();
+    	    
+    	    ps.close();
+        	con.close();
+    	}
+    			
+    			
+   }
+
 

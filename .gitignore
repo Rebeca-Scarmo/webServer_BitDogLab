@@ -1,3 +1,4 @@
+
 .metadata/
 build/
 Servers/
@@ -12,3 +13,5 @@ Servers/
 # Banco H2
 *.mv.db
 *.trace.db
+build/
+
